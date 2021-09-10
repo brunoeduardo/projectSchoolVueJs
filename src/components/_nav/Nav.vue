@@ -2,9 +2,9 @@
     <div>
         <header class="header-container">
             <nav class="nav-container">
-                <a href="">Theachers</a>
-                <a href="">Students</a>
-                <a href="">About</a>
+                <router-link to="/teachers">Teachers</router-link>
+                <router-link to="/students">Students</router-link>
+                <router-link to="/about">About</router-link>
             </nav>
         </header>
     </div>
@@ -30,4 +30,9 @@
         padding: 5px;
         text-decoration: none;
     }
+    .nav-container .router-link-active {
+        color: #203190;
+        font-weight: bold;
+    }
+
 </style>

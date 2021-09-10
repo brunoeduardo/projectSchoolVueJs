@@ -10,9 +10,11 @@
       <tbody class="teachers-table-body" v-if="teachers.length">
         <tr v-for="(teacher, index) in teachers" :key="index">
           <td>{{teacher.id}}</td>
-          <td class="teachers-table-col-name">{{teacher.name}} {{teacher.surname}}</td>
+          <router-link tag="td" to="/students" class="teachers-table-col-name col-link">
+            {{teacher.name}} {{teacher.surname}}
+            </router-link>
           <td>
-
+                {{teacher.students}}
           </td>
         </tr>
       </tbody>
@@ -37,13 +39,17 @@ export default {
   data() {
     return {
       name: '',
-      teachers: []
+      teachers: [],
+      students: []
     }
   },
   created(){
-    this.$http.get('http://localhost:3000/teachers')
+    this.$http.get('http://localhost:3000/students')
     .then(result => result.json())
-    .then(teachers => this.teachers = teachers)
+    .then(students => { 
+      this.students = students
+      this.getTeachers();
+    })
     .catch((err) => {
       console.log('Error => ', err)
     });
@@ -52,6 +58,22 @@ export default {
 
   },
   methods: {
+    getStudentsTeacher() {
+      this.teachers.map( e => {
+        e.students = this.students.filter( student => e.name === student.teacher.name).length
+      }); 
+    },
+    getTeachers() {
+      this.$http.get('http://localhost:3000/teachers')
+      .then(result => result.json())
+      .then(teachers => {
+        this.teachers = teachers;
+        this.getStudentsTeacher();
+      })
+      .catch((err) => {
+        console.log('Error => ', err)
+    });
+    }
   },
 }
 </script>
@@ -80,6 +102,8 @@ export default {
     font-size: 12px;
     font-weight: bold;
     padding: 5px;
-
+  }
+  .col-link {
+    cursor: pointer;
   }
 </style>

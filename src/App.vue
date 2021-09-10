@@ -1,24 +1,16 @@
 <template>
   <div id="app">
     <Nav/>
-    <Students/>
-    <Theacher/>
-    <About/>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import Students from './components/Student/Students';
-import Theacher from './components/Teacher/Teacher'
-import About from './components/About/About'
 import Nav from './components/_nav/Nav';
 
 export default {
   name: 'App',
   components: {
-    Students,
-    Theacher,
-    About,
     Nav
   }
 }
