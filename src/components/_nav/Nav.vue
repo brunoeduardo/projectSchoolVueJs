@@ -3,7 +3,7 @@
         <header class="header-container">
             <nav class="nav-container">
                 <router-link to="/teachers">Teachers</router-link>
-                <router-link to="/students">Students</router-link>
+                <router-link to="/allstudents">Students</router-link>
                 <router-link to="/about">About</router-link>
             </nav>
         </header>

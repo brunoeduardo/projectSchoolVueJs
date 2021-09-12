@@ -14,7 +14,12 @@ export default new Router({
             component: Theacher
         },
         {
-            path: '/students',
+            path: '/students/:teacher_id',
+            name: 'Students',
+            component: Students
+        },
+        {
+            path: '/allstudents/',
             name: 'Students',
             component: Students
         },

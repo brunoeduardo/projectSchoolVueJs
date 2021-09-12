@@ -10,7 +10,7 @@
       <tbody class="teachers-table-body" v-if="teachers.length">
         <tr v-for="(teacher, index) in teachers" :key="index">
           <td>{{teacher.id}}</td>
-          <router-link tag="td" to="/students" class="teachers-table-col-name col-link">
+          <router-link tag="td" :to="`/students/${teacher.id}`" class="teachers-table-col-name col-link">
             {{teacher.name}} {{teacher.surname}}
             </router-link>
           <td>
