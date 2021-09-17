@@ -19,7 +19,7 @@
 <style  scoped>
     .header-container {
         background: #d4d0d0;
-        margin-bottom: 30px;
+        margin-bottom: 5px;
         padding: 10px;
         text-align: center;
         width: 100%;

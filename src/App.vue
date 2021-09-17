@@ -40,4 +40,5 @@ body {
   max-width: 600px;
   padding: 0 5px;
 }
+
 </style>

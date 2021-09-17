@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <Title :textTitle="this.teacher.name ? `Teacher: ${this.teacher.name}` : `All Students`" />
+    <Title :textTitle="this.teacher.name ? `Teacher: ${this.teacher.name}` : `All Students`"/>
     <div v-show="this.teacher.name">
       <input
         type="text"
@@ -22,9 +22,10 @@
       <tbody class="students-table-body" v-if="students.length">
         <tr v-for="(student, index) in students" :key="index">
           <td>{{ student.id }}</td>
-          <td class="students-table-col-name">
+          <router-link
+            tag="td" :to="`/studentDetail/${student.id}`"  class="students-table-col-name col-link">
             {{ student.name }} {{ student.surname }}
-          </td>
+          </router-link>
           <td>
             <button class="btn" @click="removeStudent(student)">Remove</button>
           </td>
@@ -54,7 +55,7 @@ export default {
       teacherId: this.$route.params.teacher_id,
       name: "",
       students: [],
-      teacher: {}
+      teacher: {},
     };
   },
   created() {
@@ -157,5 +158,8 @@ export default {
   font-size: 12px;
   font-weight: bold;
   padding: 5px;
+}
+.col-link {
+  cursor: pointer;
 }
 </style>
