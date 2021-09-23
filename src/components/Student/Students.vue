@@ -61,7 +61,7 @@ export default {
   created() {
     if (this.teacherId) {
       this.$http
-        .get(`http://localhost:3000/students?teacher.id=${this.teacherId}`)
+        .get(`http://localhost:5000/api/students/teacher/${this.teacherId}`)
         .then((result) => result.json())
         .then((students) => {
           this.students = students;
@@ -72,7 +72,7 @@ export default {
         });
     } else {
       this.$http
-        .get("http://localhost:3000/students")
+        .get("http://localhost:5000/api/students")
         .then((result) => result.json())
         .then((students) => (this.students = students))
         .catch((err) => {
@@ -89,11 +89,12 @@ export default {
       const _student = {
         name: this.name.split(" ")[0],
         surname: this.name.split(" ")[1],
-        teacher: this.teacher
+        birth: '',
+        teacherid: this.teacher.id
       };
 
       this.$http
-        .post("http://localhost:3000/students", _student)
+        .post("http://localhost:5000/api/students", _student)
         .then((result) => result.json())
         .then((students) => this.students.push(students))
         .catch((err) => {
@@ -104,7 +105,7 @@ export default {
     },
     removeStudent(student) {
       this.$http
-        .delete(`http://localhost:3000/students/${student.id}`)
+        .delete(`http://localhost:5000/api/students/${student.id}`)
         .then(() => {
           const index = this.students.indexOf(student);
           this.students.splice(index, 1);

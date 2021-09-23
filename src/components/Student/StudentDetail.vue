@@ -1,8 +1,6 @@
 <template>
-  <div class="app-container">
-    <Title
-      :textTitle="`Student: ${this.studentName}`"
-    />
+  <div class="app-container" v-if="!isLoading">
+    <Title :textTitle="`Student: ${this.studentName}`" />
     <div class="edit-container">
       <button
         v-if="!isEditing"
@@ -72,13 +70,13 @@
       <label class="input-label" for="studentTeacher">Teacher</label>
       <select
         class="input-field"
-        v-model="student.teacher"
+        v-model="student.teacher.id"
         :disabled="editField"
       >
         <option
           v-for="(teacher, index) in teachers"
           :key="index"
-          v-bind:value="teacher"
+          v-bind:value="teacher.id"
         >
           {{ teacher.name }}
         </option>
@@ -100,13 +98,33 @@ export default {
       teachers: [],
       student: {},
       studentCopy: {},
-      studentName: '',
+      studentName: "",
       studentId: this.$route.params.id,
       editField: true,
       isEditing: false,
+      isLoading: true
     };
   },
   methods: {
+    async getTeacher(){
+      try {
+        const result = await fetch("http://localhost:5000/api/teachers");
+        this.teachers = await result.json();
+        this.getStudent();
+      } catch (err) {
+        console.log("Error => ", err);
+      }
+    },
+    async getStudent(){
+      try {
+        const result = await fetch(`http://localhost:5000/api/students/${this.studentId}`);
+        this.student = await result.json();
+        this.studentName = `${this.student.name} ${this.student.surname}`;
+        this.isLoading = false;
+      } catch (err) {
+        console.log("Error => ", err);
+      }
+    },
     editForm() {
       this.isEditing = true;
       this.editField = false;
@@ -118,18 +136,23 @@ export default {
         name: this.student.name,
         surname: this.student.surname,
         birth: this.student.birth,
-        teacher: this.student.teacher,
+        teacherid: this.student.teacher.id,
       };
 
       this.$http
-        .put(`http://localhost:3000/students/${this.studentId}`, editStudent)
+        .put(
+          `http://localhost:5000/api/students/${this.studentId}`,
+          editStudent
+        )
+        .then((result) => result.json())
+        .then((student) => this.student = student)
         .catch((err) => {
           console.log("Error => ", err);
         });
 
-        this.isEditing = false;
-        this.editField = true;
-        this.studentName = `${this.student.name} ${this.student.surname}`
+      this.isEditing = false;
+      this.editField = true;
+      this.studentName = `${this.student.name} ${this.student.surname}`;
     },
     cancelForm() {
       this.isEditing = false;
@@ -138,24 +161,7 @@ export default {
     },
   },
   created() {
-    this.$http
-      .get(`http://localhost:3000/students/${this.studentId}`)
-      .then((result) => result.json())
-      .then((student) => {
-          this.student = student;
-          this.studentName = `${this.student.name} ${this.student.surname}`
-      })
-      .catch((err) => {
-        console.log("Error => ", err);
-      });
-
-    this.$http
-      .get("http://localhost:3000/teachers")
-      .then((result) => result.json())
-      .then((teachers) => (this.teachers = teachers))
-      .catch((err) => {
-        console.log("Error => ", err);
-      });
+    this.getTeacher();
   },
 };
 </script>
