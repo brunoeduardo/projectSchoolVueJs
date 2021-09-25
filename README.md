@@ -1,24 +1,14 @@
-# project_school
+# Project School - Create a web site with VueJs
 
-## Project setup
-```
-npm install
-```
+Study how to create web site with VueJs. 
+## About the project
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+In this project I learned how the Vue Js works.
 
-### Compiles and minifies for production
-```
-npm run build
-```
+Created a simple structure witch pages, service and components.
 
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+This project makes available information about students and teachers in a fictitious school
+## Technology
+ - VueJs
+ 
+ 
