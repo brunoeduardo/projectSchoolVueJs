@@ -31,6 +31,8 @@
 
 <script>
 import Title from '../_share/Title';
+import studentService from "../../services/students.service.vue";
+import teacherService from "../../services/teacher.service.vue";
 
 export default {
   components: {
@@ -43,16 +45,13 @@ export default {
       students: []
     }
   },
-  created(){
-    this.$http.get('http://localhost:5000/api/students')
-    .then(result => result.json())
-    .then(students => { 
-      this.students = students
+  async created(){
+    try {
+      this.students  = await studentService.getAllStudents();
       this.getTeachers();
-    })
-    .catch((err) => {
-      console.log('Error => ', err)
-    });
+    } catch (err) {
+      console.log(err);
+    }
   },
   props: {
 
@@ -63,16 +62,13 @@ export default {
         e.students = this.students.filter( student => e.name === student.teacher.name).length
       }); 
     },
-    getTeachers() {
-      this.$http.get('http://localhost:5000/api/teachers')
-      .then(result => result.json())
-      .then(teachers => {
-        this.teachers = teachers;
-        this.getStudentsTeacher();
-      })
-      .catch((err) => {
-        console.log('Error => ', err)
-    });
+    async getTeachers() {
+      try {
+        this.teachers  = await teacherService.getTeachers();
+         this.getStudentsTeacher();
+      } catch (err) {
+        console.log(err);
+      }
     }
   },
 }

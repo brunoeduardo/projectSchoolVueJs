@@ -88,6 +88,8 @@
 <script>
 import Title from "../_share/Title";
 import lodash from "lodash";
+import studentService from "../../services/students.service.vue";
+import teacherService from "../../services/teacher.service.vue";
 
 export default {
   components: {
@@ -108,8 +110,7 @@ export default {
   methods: {
     async getTeacher(){
       try {
-        const result = await fetch("http://localhost:5000/api/teachers");
-        this.teachers = await result.json();
+        this.teachers = await teacherService.getTeachers();
         this.getStudent();
       } catch (err) {
         console.log("Error => ", err);
@@ -117,8 +118,7 @@ export default {
     },
     async getStudent(){
       try {
-        const result = await fetch(`http://localhost:5000/api/students/${this.studentId}`);
-        this.student = await result.json();
+        this.student = await studentService.getStudentsById(this.studentId);
         this.studentName = `${this.student.name} ${this.student.surname}`;
         this.isLoading = false;
       } catch (err) {
@@ -130,7 +130,7 @@ export default {
       this.editField = false;
       this.studentCopy = lodash.cloneDeep(this.student);
     },
-    saveForm() {
+    async saveForm() {
       let editStudent = {
         id: this.student.id,
         name: this.student.name,
@@ -139,16 +139,11 @@ export default {
         teacherid: this.student.teacher.id,
       };
 
-      this.$http
-        .put(
-          `http://localhost:5000/api/students/${this.studentId}`,
-          editStudent
-        )
-        .then((result) => result.json())
-        .then((student) => this.student = student)
-        .catch((err) => {
-          console.log("Error => ", err);
-        });
+      try {
+        this.student = await studentService.updateStudent(this.studentId, editStudent);
+      } catch (err) {
+        console.log("Error => ", err);
+      }
 
       this.isEditing = false;
       this.editField = true;

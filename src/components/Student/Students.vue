@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <Title :textTitle="this.teacher.name ? `Teacher: ${this.teacher.name}` : `All Students`"/>
+    <Title :textTitle=" this.teacher.name ? `Teacher: ${this.teacher.name}` : `All Students`"/>
     <div v-show="this.teacher.name">
       <input
         type="text"
@@ -22,8 +22,7 @@
       <tbody class="students-table-body" v-if="students.length">
         <tr v-for="(student, index) in students" :key="index">
           <td>{{ student.id }}</td>
-          <router-link
-            tag="td" :to="`/studentDetail/${student.id}`"  class="students-table-col-name col-link">
+          <router-link tag="td" :to="`/studentDetail/${student.id}`" class="students-table-col-name col-link">
             {{ student.name }} {{ student.surname }}
           </router-link>
           <td>
@@ -44,6 +43,7 @@
 
 <script>
 import Title from "../_share/Title";
+import studentService from "../../services/students.service.vue";
 
 export default {
   components: {
@@ -58,61 +58,51 @@ export default {
       teacher: {},
     };
   },
-  created() {
+  async created() {
     if (this.teacherId) {
-      this.$http
-        .get(`http://localhost:5000/api/students/teacher/${this.teacherId}`)
-        .then((result) => result.json())
-        .then((students) => {
-          this.students = students;
-          this.teacher = students[0].teacher;
-        })
-        .catch((err) => {
-          console.log("Error => ", err);
-        });
+      try {
+        this.students = await studentService.getStudentsByTeacherId(this.teacherId);
+        this.teacher = this.students[0].teacher;
+      } catch (err) {
+        console.log(err);
+      }
     } else {
-      this.$http
-        .get("http://localhost:5000/api/students")
-        .then((result) => result.json())
-        .then((students) => (this.students = students))
-        .catch((err) => {
-          console.log("Error => ", err);
-        });
+      try {
+        this.students = await studentService.getAllStudents();
+      } catch (err) {
+        console.log(err);
+      }
     }
   },
   props: {},
   methods: {
-    addStudent() {
+    async addStudent() {
       if (!this.name) {
         return;
       }
       const _student = {
         name: this.name.split(" ")[0],
         surname: this.name.split(" ")[1],
-        birth: '',
-        teacherid: this.teacher.id
+        birth: "",
+        teacherid: this.teacher.id,
       };
 
-      this.$http
-        .post("http://localhost:5000/api/students", _student)
-        .then((result) => result.json())
-        .then((students) => this.students.push(students))
-        .catch((err) => {
-          console.log("Error => ", err);
-        });
-
-      this.name = "";
+      try {
+        const result = await studentService.saveStudent(_student);
+        this.students.push(result);
+        this.name = "";
+      } catch (err) {
+        console.log(err);
+      }
     },
-    removeStudent(student) {
-      this.$http
-        .delete(`http://localhost:5000/api/students/${student.id}`)
-        .then(() => {
-          const index = this.students.indexOf(student);
-          this.students.splice(index, 1);
-        })
-        .catch((err) => {
-          console.log("Error => ", err);
-        });
+    async removeStudent(student) {
+      try {
+        const result = await studentService.deleteStudent(student);
+        this.students.push(result);
+        this.name = "";
+      } catch (err) {
+        console.log(err);
+      }
     },
   },
 };
@@ -156,6 +146,7 @@ export default {
   background: #d41212;
   border: none;
   color: #fff;
+  cursor: pointer;
   font-size: 12px;
   font-weight: bold;
   padding: 5px;
